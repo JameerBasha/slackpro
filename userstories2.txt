@@ -1,0 +1,12 @@
+________>I should be able to see username and password input along with login button		
+________>I should be able to login with correct credentials
+________>I should see error message if the entered password is wrong
+
+
+
+________>I should be able to enter my email, username, password, retype password to make sure the
+              	    password is correct along with the register button
+________>I should see an error when username or email is already taken as well as if the password does not
+	            match the retyped password
+________>The email entered must be of correct format (iamslackpro@slack.com)
+________>The username, password must

@@ -1,0 +1,15 @@
+
+->As a slackpro user I want to Login so that I can be connected to my collegues
+---------------------------------------------------------------------------------------------------------------------------------------------
+->As a first time visitor I want to Register so that I can make myself available to others
+---------------------------------------------------------------------------------------------------------------------------------------------
+->As a slackpro user I should be able to see a dashboard with the list of groups
+---------------------------------------------------------------------------------------------------------------------------------------------
+->As a slackpro user I should be able to make group of my collegues to send common messages
+---------------------------------------------------------------------------------------------------------------------------------------------
+->As a slackpro group admin I should be able add and remove member from my group
+---------------------------------------------------------------------------------------------------------------------------------------------
+->As a slackpro group admin I should be able to delete a group if it is not needed
+---------------------------------------------------------------------------------------------------------------------------------------------
+->As a slackpro user I should be able to see the members in the group
+---------------------------------------------------------------------------------------------------------------------------------------------
