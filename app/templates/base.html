@@ -1,1 +1,28 @@
-<h1>hello</h1>
+<html>
+
+<head>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    {% if title %}
+    <title>{{ title }} - SlackPro</title>
+    {% else %}
+    <title>SlackPro</title>
+    {% endif %}
+</head>
+<!-- //pdb cmd debugging -->
+
+<body>
+    <center>
+        <h1>SlackPro</h1>
+    </center>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <center class='bg-danger'><span class='text-danger'>{{ message }}</span></center>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+</body>
+
+</html>

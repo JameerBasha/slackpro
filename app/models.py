@@ -1,7 +1,7 @@
 from flask_login import UserMixin
 from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from datetime import datetime
 
 class UserTable(UserMixin, db.Model):
     id=db.Column(db.Integer, primary_key=True)
@@ -17,6 +17,24 @@ class UserTable(UserMixin, db.Model):
 
     def __repr__(self):
         return '<UserTable {}>'.format(self.username)
+
+class GroupTable(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    groupname=db.Column(db.String(50), index=True, unique=True)
+    admin_id=db.Column(db.Integer,db.ForeignKey('user_table.id'))
+    group_description=db.Column(db.String(150), index=True)
+
+class GroupMembers(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    member_id=db.Column(db.Integer, db.ForeignKey('user_table.id'))
+
+
+class Message(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    group_id=db.Column(db.Integer, db.ForeignKey('group_table.id'))
+    user_id=db.Column(db.Integer, db.ForeignKey('user_table.id'))
+    message=db.Column(db.String(500))
+    message_time=db.Column(db.DateTime, default=datetime.utcnow)
 
 @login.user_loader
 def load_user(id):

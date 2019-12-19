@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<center class='bg-danger'>
+    <h1 class='text-danger'>File not found</h1>
+    <br>
+    <p><a href="{{ url_for('main.index') }}">Back</a></p>
+</center>
+{% endblock %}

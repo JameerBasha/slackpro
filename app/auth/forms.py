@@ -10,8 +10,8 @@ class LoginForm(FlaskForm):
     submit=SubmitField('Submit')
 
 class RegisterForm(FlaskForm):
-    username=StringField('username',validators=[DataRequired()])
-    email=StringField('email',validators=[DataRequired(),Email()])
+    username=StringField('Username',validators=[DataRequired()])
+    email=StringField('Email',validators=[DataRequired(),Email()])
     password=PasswordField('Password',validators=[DataRequired()])
     password_repeat=PasswordField(
         'Repeat Password',validators=[EqualTo('password')])
