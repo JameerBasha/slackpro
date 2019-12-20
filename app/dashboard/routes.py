@@ -3,7 +3,7 @@ from flask_login import current_user
 from app import db
 from app.dashboard import bp
 from app.models import UserTable,GroupTable,GroupMembers,Message
-from app.dashboard.forms import MessageForm, CreateGroup
+from app.dashboard.forms import MessageForm, CreateGroup, AddMembers
 
 @bp.route('/dashboard',methods=['GET','POST'])
 def dashboard():
@@ -86,8 +86,11 @@ def groupinfo(group_id):
     members=GroupMembers.query.filter_by(group_id=group_id).all()
     members_names=[]
     for member in members:
-        members_names.append(member.member_name)
-    if(group.admin_id==user.id):
-        return render_template('dashboard/showmembers.html',members=members_names,group=group.groupname,description=group.group_description)
+        members_names.append([member.member_name,UserTable.query.filter_by(id=member.member_id).first()])
+    admin=UserTable.query.filter_by(id=group.admin_id).first()
+    print(admin)
+    form=AddMembers()
+    if(admin.id!=user.id):
+        return render_template('dashboard/showmembers.html',members=members_names,group=group.groupname,description=group.group_description,admin=admin.username,is_admin=False,form=form)
     else:
-        return render_template('dashboard/showmembers.html',members=members_names,group=group.groupname,description=group.group_description)
+        return render_template('dashboard/showmembers.html',members=members_names,group=group.groupname,description=group.group_description,admin='You are the admin',is_admin=True,form=form)
