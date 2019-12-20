@@ -30,6 +30,9 @@ def create_app(config_class=Config):
 	
 	from app.errors import bp as errors_bp
 	app.register_blueprint(errors_bp)
+
+	from app.dashboard import bp as dashboard_bp
+	app.register_blueprint(dashboard_bp)
 	
 	return app
 

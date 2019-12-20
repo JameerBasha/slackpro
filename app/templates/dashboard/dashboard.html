@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{%  block content %}
+<div style='padding-left:10%;padding-right:10%'>
+    <button class='btn green' onclick="window.location.href = '/creategroup';">Create a new
+        group</button>
+    <br>
+    <h4 style='color:green'>Groups in which you are member:</h4>
+    <div class="collection">
+        {% for group in groups %}
+        <a href="/group/{{ group[1] }}" class="collection-item"
+            style='color:black;'><b>{{ group[0] }}</b><br>{{ group[2] }}</a>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

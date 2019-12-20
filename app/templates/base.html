@@ -1,7 +1,16 @@
 <html>
 
 <head>
-    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
+    </script>
+    <!-- <meta name="viewport" content="width = device-width, initial-scale = 1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
     {% if title %}
     <title>{{ title }} - SlackPro</title>
     {% else %}
@@ -10,19 +19,55 @@
 </head>
 <!-- //pdb cmd debugging -->
 
-<body>
-    <center>
-        <h1>SlackPro</h1>
-    </center>
+<body style='background: linear-gradient(to right,#fdfbfb , #ebedee);'>
 
+
+
+
+    {% block navbar %}
+
+    <nav class='green'>
+        <div class="nav-wrapper">
+            <a href="/" class="brand-logo" style='color:cornsilk'>&nbsp;&nbsp;SlackPro</a>
+            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
+                {% if not(current_user.is_anonymous) %}
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/creategroup">Create Group</a></li>
+                <li><a href="/logout">Logout</a></li>
+                {% else %}
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+                {% endif %}
+            </ul>
+            <ul class="side-nav" id="mobile-demo">
+                {% if not(current_user.is_anonymous) %}
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/creategroup">Create Group</a></li>
+                <li><a href="/logout">Logout</a></li>
+                {% else %}
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    {% endblock %}
+
+    <br>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     {% for message in messages %}
-    <center class='bg-danger'><span class='text-danger'>{{ message }}</span></center>
+    <center class='bg-info'><span class='text-info'>{{ message }}</span></center>
     {% endfor %}
     {% endif %}
     {% endwith %}
     {% block content %}{% endblock %}
 </body>
+{% block javascript %}
+<script>
+    $(".button-collapse").sideNav();
+</script>
+{% endblock %}
 
 </html>

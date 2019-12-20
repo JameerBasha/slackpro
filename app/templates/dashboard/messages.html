@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style='padding-left:10%; padding-right:10%'>
+    <a href='{{ url_for("dashboard.groupinfo",group_id=groupid) }}'><button class='btn green'> Group info </button></a>
+    <h3>{{ groupname }}</h3>
+    <h4>{{ groupdescription }}</h4>
+    <form action='' method='post' novalidate>
+        {{ form.hidden_tag() }}
+        {{ form.message(placeholder='Write Something...') }}
+        {% for error in form.message.errors %}
+        <span class='text-danger'>[{{ error }}]</span>
+        {% endfor %}
+        {{ form.submit(class='btn green') }}
+    </form>
+    <ul class="collapsible">
+        {% for message in messages %}
+        <li>
+            <div class="collapsible-header">
+                <span><b>{{ message.user_name }}</b></span><br>
+                <span>{{ message.message }}</span>
+            </div>
+            <div class="collapsible-body">
+                <p>Sent at: {{ message.message_time }}</p>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

@@ -26,13 +26,16 @@ class GroupTable(db.Model):
 
 class GroupMembers(db.Model):
     id=db.Column(db.Integer, primary_key=True)
+    group_id=db.Column(db.Integer, db.ForeignKey('group_table.id'))
     member_id=db.Column(db.Integer, db.ForeignKey('user_table.id'))
+    member_name=db.Column(db.String(50),  db.ForeignKey('user_table.username'))
 
 
 class Message(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     group_id=db.Column(db.Integer, db.ForeignKey('group_table.id'))
     user_id=db.Column(db.Integer, db.ForeignKey('user_table.id'))
+    user_name=db.Column(db.String(50), db.ForeignKey('user_table.username'))
     message=db.Column(db.String(500))
     message_time=db.Column(db.DateTime, default=datetime.utcnow)
 

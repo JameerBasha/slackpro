@@ -2,4 +2,4 @@ from flask import Blueprint
 
 bp=Blueprint('dashboard',__name__)
 
-from app.auth import routes
+from app.dashboard import routes

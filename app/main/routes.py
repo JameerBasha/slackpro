@@ -9,5 +9,5 @@ from flask_login import current_user
 @bp.route('/index')
 def index():
     if current_user.is_authenticated:
-        return render_template('base.html')
+        return redirect(url_for('dashboard.dashboard'))
     return redirect(url_for('auth.login'))

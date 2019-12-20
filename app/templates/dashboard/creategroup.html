@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action='' method='post' novalidate style='padding-left:10%'>
+    {{ form.hidden_tag() }}
+    {{ form.group_name.label(style='font-size:2rem; color:green') }}<br>
+    {{ form.group_name(style='width:25%') }}<br><br>
+    {% for error in form.group_name %}
+    <span class='text-danger'>[{{ error }}]</span>
+    {% endfor %}
+    {{ form.group_description.label(style='font-size:2rem;color:green') }}<br>
+    {{ form.group_description(style='width:40%') }}<br><br>
+    {{ form.group_members.label(style='font-size:2rem;color:green;') }}<br>
+    {{ form.group_members(style='width:80%') }}<br><br>
+    {{ form.submit(class='btn green') }}
+</form>
+{% endblock %}

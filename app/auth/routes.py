@@ -17,7 +17,7 @@ def login():
             return redirect(url_for('auth.login'))
         else:
             login_user(user,remember=form.remember_me.data)
-            return render_template('base.html')
+            return redirect(url_for('dashboard.dashboard'))
     return render_template('auth/login.html',title='Login',form=form)
 
 @bp.route('/register',methods=['GET','POST'])
