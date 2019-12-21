@@ -20,7 +20,7 @@ class UserTable(UserMixin, db.Model):
 
 class GroupTable(db.Model):
     id=db.Column(db.Integer, primary_key=True)
-    groupname=db.Column(db.String(50), index=True, unique=True)
+    groupname=db.Column(db.String(50), index=True)
     admin_id=db.Column(db.Integer,db.ForeignKey('user_table.id'))
     group_description=db.Column(db.String(150), index=True)
 

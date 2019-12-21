@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content  %}
+<script>
+    $(document).ready(function () {
+        document.getElementById('addmembersform'.reset())
+    })
+</script>
 <div style='padding-left:10%;padding-right:10%'>
     <h4 style='color:green'>Group Name<br>
         <h5> {{ group }} </h5>
@@ -15,14 +20,25 @@
     {% for member in members %}
     <h5>{{ member[0] }}</h5>
     <h6>{{ member[1].email }}</h6>
+    {% if is_admin %}
+    {% if currentid != member[1].id %}
+    <a href='{{ url_for("dashboard.removemember",groupid=groupid,memberid=member[1].id) }}'><button
+            class=' btn green'>Remove member</button></a>
+    {% endif %}
+    {% endif %}
     {% endfor %}
     {% if is_admin %}
-    <h4>{{ form.members.label(style='color:green;font-size:2.2rem;') }}</h4><br>
-    {{ form.members }}<br>
-    {{ form.submit(class='btn green') }}
-
+    <form action='' method='post' novalidate id='addmembersform'>
+        {{ form.hidden_tag() }}
+        <h4>{{ form.members.label(style='color:green;font-size:2.2rem;') }}</h4><br>
+        {{ form.members }}<br>
+        {{ form.submit(class='btn green') }}
+    </form>
+    <a href='{{ url_for("dashboard.deletegroup",groupid=groupid) }}'><button class=' btn green'>Delete
+            Group</button></a>
     {% else %}
-    <a href='leavegroup'><button class='btn green'>Leave group</button></a>
+    <a href='{{ url_for("dashboard.leavegroup",groupid=groupid) }}'><button class=' btn green'>Leave
+            group</button></a>
     {% endif %}
 </div>
 {% endblock %}

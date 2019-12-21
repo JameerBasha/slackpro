@@ -1,19 +1,54 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<script type='text/javascript'>
+    $(document).ready(function () {
+
+        var socket = io.connect();
+        var groupidnumber = (document.getElementById('groupidnumber').innerText)
+        var username = (document.getElementById('username').innerText)
+        socket.on(String(groupidnumber), function (msg) {
+            if (groupidnumber == msg['groupidnumber']) {
+                $('#messagecontainer').prepend("<li><div class='collapsible-header'><span><b>" + msg['username'] + "</b></span> <br><span>" + msg['message'] + "</span></div> <div class='collapsible-body'><p>Sent : " + msg['time'] + "</p></div></li > ");
+            }
+            if (msg['username'] === (document.getElementById('username').innerText)) {
+                document.getElementById('messageinputform').reset();
+            }
+            var messagecontainer = $('#messagecontainer');
+            console.log(messagecontainer)
+            var child = messagecontainer.lastElementChild;
+            console.log(child)
+        });
+        $('form#messageinputform').submit(function (event) {
+            var timeToSend = String(new Date())
+            if (document.getElementById('messageinputbox').value === '') {
+                return false;
+            }
+            socket.emit('my broadcast event', {
+                message: (document.getElementById('messageinputbox').value),
+                username: (document.getElementById('username').innerText),
+                groupidnumber: (document.getElementById('groupidnumber').innerText),
+                time: timeToSend
+            });
+            return false;
+        });
+    });
+</script>
+<span style='display:none' id='groupidnumber'>{{ groupid }}</span>
+<span style='display:none' id='username'>{{ username }}</span>
 <div style='padding-left:10%; padding-right:10%'>
     <a href='{{ url_for("dashboard.groupinfo",group_id=groupid) }}'><button class='btn green'> Group info </button></a>
     <h3>{{ groupname }}</h3>
     <h4>{{ groupdescription }}</h4>
-    <form action='' method='post' novalidate>
+    <form action='' method='post' novalidate id='messageinputform'>
         {{ form.hidden_tag() }}
-        {{ form.message(placeholder='Write Something...') }}
+        {{ form.message(placeholder='Write Something...',id='messageinputbox') }}
         {% for error in form.message.errors %}
-        <span class='text-danger'>[{{ error }}]</span>
+        <br><span class='text-danger'>[{{ error }}]</span><br>
         {% endfor %}
         {{ form.submit(class='btn green') }}
     </form>
-    <ul class="collapsible">
+    <ul class="collapsible" id='messagecontainer'>
         {% for message in messages %}
         <li>
             <div class="collapsible-header">
@@ -21,11 +56,19 @@
                 <span>{{ message.message }}</span>
             </div>
             <div class="collapsible-body">
-                <p>Sent at: {{ message.message_time }}</p>
+                <p>Sent : {{ moment(message.message_time).calendar() }} ({{ moment(message.message_time).fromNow() }})
+                </p>
             </div>
         </li>
         {% endfor %}
     </ul>
+
+    {% if prev_url %}
+    <a href="{{ prev_url }}" class='left'><button class='btn green'>Newer messages</button></a>
+    {% endif %}
+    {% if next_url %}
+    <a href="{{ next_url }}" class='right'><button class='btn green'>Older messages</button></a>
+    {% endif %}
 </div>
 
 {% endblock %}

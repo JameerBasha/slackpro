@@ -4,9 +4,13 @@ from flask_sqlalchemy  import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+from flask_socketio import SocketIO, send
 
 db=SQLAlchemy()
 login=LoginManager()
+moment=Moment()
+socketio=SocketIO()
 
 def create_app(config_class=Config):
 
@@ -18,6 +22,8 @@ def create_app(config_class=Config):
 	login.init_app(app)
 	login.login_view='auth.login'
 	migrate.init_app(app,db)
+	moment.init_app(app)
+	socketio.init_app(app)
 
 
 
@@ -34,6 +40,8 @@ def create_app(config_class=Config):
 	from app.dashboard import bp as dashboard_bp
 	app.register_blueprint(dashboard_bp)
 	
+	socketio.run(app)
+
 	return app
 
 

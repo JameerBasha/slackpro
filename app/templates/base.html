@@ -1,17 +1,16 @@
 <html>
 
 <head>
+    {{ moment.include_jquery() }}
+    {{ moment.include_moment() }}
+    <script type='text/javascript'
+        src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js'></script>
     <meta name="viewport" content="width = device-width, initial-scale = 1">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
     </script>
-    <!-- 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
     {% if title %}
     <title>{{ title }} - SlackPro</title>
     {% else %}
@@ -20,14 +19,14 @@
 </head>
 <!-- //pdb cmd debugging -->
 
-<body style='background: linear-gradient(to right,#fdfbfb , #ebedee);'>
+<body style='background: linear-gradient(to right,#fdfbfb , #ebedee); zoom: 125%;'>
 
 
 
 
     {% block navbar %}
 
-    <nav class='green'>
+    <nav class='green' style='display:fixed;'>
         <div class="nav-wrapper">
             <a href="/" class="brand-logo" style='color:cornsilk'>&nbsp;&nbsp;SlackPro</a>
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>

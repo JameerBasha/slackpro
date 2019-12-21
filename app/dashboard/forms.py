@@ -9,10 +9,10 @@ class MessageForm(FlaskForm):
 
 class CreateGroup(FlaskForm):
     group_name=StringField('Group Name',validators=[DataRequired()])
-    group_description=StringField('Description',validators=[DataRequired()])
-    group_members=StringField('Username of Members separated by commas ',validators=[DataRequired()])
+    group_description=StringField('Description')
+    group_members=StringField('Username of Members separated by commas ')
     submit=SubmitField('Create Group')
 
 class AddMembers(FlaskForm):
-    members=StringField('Members to add',validators=[DataRequired()])
+    members=StringField('Members to add separated by commas',validators=[DataRequired()])
     submit=SubmitField('Add members')
