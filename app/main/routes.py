@@ -25,6 +25,6 @@ def test_message(message):
 @bp.route('/')
 @bp.route('/index')
 def index():
-    if current_user.is_authenticated:
+    if is_authenticated():
         return redirect(url_for('dashboard.dashboard'))
     return redirect(url_for('auth.login'))

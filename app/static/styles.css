@@ -1,0 +1,12 @@
+body{
+    background: linear-gradient(to right,#fdfbfb , #ebedee); 
+    zoom: 125%;
+}
+.avatar-image{
+    padding-top:10px;
+    height:50px;
+    width:50px;
+}
+.top-message{
+    font-size:1.3rem;
+}

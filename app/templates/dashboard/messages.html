@@ -8,7 +8,7 @@
         var username = (document.getElementById('username').innerText)
         socket.on(String(groupidnumber), function (msg) {
             if (groupidnumber == msg['groupidnumber']) {
-                $('#messagecontainer').prepend("<li><div class='collapsible-header'><span><b>" + msg['username'] + "</b></span> <br><span>" + msg['message'] + "</span></div> <div class='collapsible-body'><p>Sent : " + msg['time'] + "</p></div></li > ");
+                $('#messagecontainer').prepend("<li><div class='collapsible-header'><img src='https://avatars.dicebear.com/v2/gridy/" + msg['username'] + ".svg' class='avatar-image'><span><b>" + msg['username'] + "</b></span> <br><span>" + msg['message'] + "</span></div> <div class='collapsible-body'><p>Sent : " + msg['time'] + "</p></div></li > ");
             }
             if (msg['username'] === (document.getElementById('username').innerText)) {
                 document.getElementById('messageinputform').reset();
@@ -51,6 +51,7 @@
         {% for message in messages %}
         <li>
             <div class="collapsible-header">
+                <img src="https://avatars.dicebear.com/v2/gridy/{{ message.user_name }}.svg" class='avatar-image'>
                 <span><b>{{ message.user_name }}</b></span><br>
                 <span>{{ message.message }}</span>
             </div>

@@ -17,6 +17,7 @@ def login():
             return redirect(url_for('auth.login'))
         else:
             login_user(user,remember=form.remember_me.data)
+            flash('Login successful')
             return redirect(url_for('dashboard.dashboard'))
     return render_template('auth/login.html',title='Login',form=form)
 

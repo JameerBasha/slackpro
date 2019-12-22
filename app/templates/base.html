@@ -11,6 +11,7 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
     </script>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles.css') }}">
     {% if title %}
     <title>{{ title }} - SlackPro</title>
     {% else %}
@@ -19,7 +20,7 @@
 </head>
 <!-- //pdb cmd debugging -->
 
-<body style='background: linear-gradient(to right,#fdfbfb , #ebedee); zoom: 125%;'>
+<body>
 
 
 
@@ -58,7 +59,7 @@
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     {% for message in messages %}
-    <center class='bg-info'><span class='text-info'>{{ message }}</span></center>
+    <center><span class='top-message'>{{ message }}</span></center>
     {% endfor %}
     {% endif %}
     {% endwith %}

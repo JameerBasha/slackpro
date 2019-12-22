@@ -3,7 +3,8 @@
 {% block content  %}
 <script>
     $(document).ready(function () {
-        document.getElementById('addmembersform'.reset())
+        document.getElementById('members'.value = '')
+        document.getElementById('changedesc'.value = '')
     })
 </script>
 <div style='padding-left:10%;padding-right:10%'>
@@ -13,24 +14,32 @@
     <h4 style='color:green'>Group Description<br>
         <h5> {{ description }} </h5>
     </h4>
+    <h4 style='color:green'>Change Group info</h4>
+    <form action='' method='post' novalidate id='addmembersform'>
+        {{ form.hidden_tag() }}
+        <h5>{{ changedesc.description(id='changedesc') }}</h5>
+        {{ changedesc.submit(class='btn green') }}
+    </form>
+
     <h4 style='color:green'>Group Admin<br>
         <h5> {{ admin }} </h5>
     </h4>
     <h4 style='color:green'>Participants</h4>
     {% for member in members %}
+    <img src="https://avatars.dicebear.com/v2/gridy/{{ member[0] }}.svg" class='avatar-image'>
     <h5>{{ member[0] }}</h5>
     <h6>{{ member[1].email }}</h6>
     {% if is_admin %}
     {% if currentid != member[1].id %}
     <a href='{{ url_for("dashboard.removemember",groupid=groupid,memberid=member[1].id) }}'><button
-            class=' btn green'>Remove member</button></a>
+            class=' btn green'>Remove member</button></a><br>
     {% endif %}
     {% endif %}
     {% endfor %}
     {% if is_admin %}
     <form action='' method='post' novalidate id='addmembersform'>
         {{ form.hidden_tag() }}
-        <h4>{{ form.members.label(style='color:green;font-size:2.2rem;') }}</h4><br>
+        <h4 style='color:green'>Members to add separated by commas</h4><br>
         {{ form.members }}<br>
         {{ form.submit(class='btn green') }}
     </form>

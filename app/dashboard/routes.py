@@ -3,7 +3,7 @@ from flask_login import current_user
 from app import db
 from app.dashboard import bp
 from app.models import UserTable,GroupTable,GroupMembers,Message
-from app.dashboard.forms import MessageForm, CreateGroup, AddMembers
+from app.dashboard.forms import MessageForm, CreateGroup, AddMembers, ChangeGroupDescription
 from flask_socketio import send,emit
 from app.services import is_authenticated
 
@@ -88,8 +88,12 @@ def groupinfo(group_id):
     for member in members:
         members_names.append([member.member_name,UserTable.query.filter_by(id=member.member_id).first()])
     admin=UserTable.query.filter_by(id=group.admin_id).first()
-    print(admin)
     form=AddMembers()
+    description_form=ChangeGroupDescription()
+    if description_form.validate_on_submit():
+        GroupTable.query.filter_by(id=group_id).update({"group_description":description_form.description.data})
+        db.session.commit()
+        redirect(url_for('dashboard.groupinfo',group_id=group_id))
     if form.validate_on_submit():
         group_members=form.members.data.split(',')
         print(group_members )
@@ -103,9 +107,9 @@ def groupinfo(group_id):
                 db.session.commit()
                 return redirect(url_for('dashboard.groupinfo',group_id=group_id))
     if(admin.id!=user.id):
-        return render_template('dashboard/showmembers.html',currentid=current_user.id,groupid=group_id,members=members_names,group=group.groupname,description=group.group_description,admin=admin.username,is_admin=False,form=form)
+        return render_template('dashboard/showmembers.html',currentid=current_user.id,groupid=group_id,members=members_names,group=group.groupname,description=group.group_description,admin=admin.username,is_admin=False,form=form,changedesc=description_form)
     else:
-        return render_template('dashboard/showmembers.html',currentid=current_user.id,groupid=group_id,members=members_names,group=group.groupname,description=group.group_description,admin='You are the admin',is_admin=True,form=form)
+        return render_template('dashboard/showmembers.html',currentid=current_user.id,groupid=group_id,members=members_names,group=group.groupname,description=group.group_description,admin='You are the admin',is_admin=True,form=form,changedesc=description_form)
 
 
 @bp.route('/leavegroup/<groupid>',methods=['POST','GET'])

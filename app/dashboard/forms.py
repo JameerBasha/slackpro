@@ -16,3 +16,7 @@ class CreateGroup(FlaskForm):
 class AddMembers(FlaskForm):
     members=StringField('Members to add separated by commas',validators=[DataRequired()])
     submit=SubmitField('Add members')
+
+class ChangeGroupDescription(FlaskForm):
+    description=StringField('New group description',validators=[DataRequired()])
+    submit=SubmitField('Change Group Description')
