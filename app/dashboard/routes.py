@@ -5,29 +5,26 @@ from app.dashboard import bp
 from app.models import UserTable,GroupTable,GroupMembers,Message
 from app.dashboard.forms import MessageForm, CreateGroup, AddMembers, ChangeGroupDescription
 from flask_socketio import send,emit
-from app.services import is_authenticated
+from app.services import is_authenticated, get_list_of_groups, get_current_user,create_new_group, get_group, create_message, get_group_single, get_group_members_names, get_group_members, leave_group, add_group_members, change_group_description, delete_group, remove_group_member
 
 @bp.route('/dashboard',methods=['GET','POST'])
 def dashboard():
     if is_authenticated():
-        user=UserTable.query.filter_by(username=current_user.username).first()
-        groups_as_member=GroupMembers.query.filter_by(member_id=user.id).all()
-        groups=[]
-        for group in groups_as_member:
-            temp_group=GroupTable.query.filter_by(id=group.group_id).first()
-            groups.append([temp_group.groupname,temp_group.id,temp_group.group_description])
-        return render_template('dashboard/dashboard.html',groups=groups)
+        groups,username=get_list_of_groups()
+        return render_template('dashboard/dashboard.html',groups=groups,username=username)
     else:
         flash('Sorry, you are not logged in. Please login to continue.')
         return redirect(url_for('auth.login'))
 
 @bp.route('/group/<groupid>',methods=['GET','POST'])
 def group(groupid):
-    if not(current_user.is_authenticated):
+    if not(is_authenticated()):
         flash('Sorry, you are not logged in. Please login to continue')
         return redirect(url_for('auth.login'))
-    user=UserTable.query.filter_by(username=current_user.username).first()
-    group=GroupTable.query.filter_by(id=groupid).all()
+    if not(GroupMembers.query.filter_by(member_id=current_user.id).filter_by(group_id=groupid).all()):
+        return render_template('errors/404.html'), 404
+    user=get_current_user()
+    group=get_group(groupid)
     if not(group):
         return render_template('errors/404.html'), 404
     page = request.args.get('page', 1, type=int)
@@ -36,11 +33,7 @@ def group(groupid):
         messages=Message.query.filter_by(group_id=group.id).order_by(Message.message_time.desc()).paginate(page,3,False)
         form=MessageForm()
         if form.validate_on_submit():
-            messageobj=Message(message=form.message.data,group_id=group_id,user_id=user.id,user_name=user.username)
-            db.session.add(messageobj)
-            db.session.commit()
-
-
+            create_message(form)
         next_url = url_for('dashboard.group', page=messages.next_num,groupid=groupid) \
         if messages.has_next else None
         prev_url = url_for('dashboard.group', page=messages.prev_num,groupid=groupid) \
@@ -55,57 +48,34 @@ def creategroup():
     if not(current_user.is_authenticated):
         flash('Sorry, you are not logged in. Please login to continue.')
         return redirect(url_for('auth.login'))
-    user=UserTable.query.filter_by(username=current_user.username).first()
     form=CreateGroup()
     if form.validate_on_submit():
-        newgroup=GroupTable(admin_id=user.id,groupname=form.group_name.data,group_description=form.group_description.data)
-        db.session.add(newgroup)
-        db.session.commit()
-        group_admin=GroupMembers(member_name=user.username,member_id=user.id,group_id=newgroup.id)
-        db.session.add(group_admin)
-        db.session.commit()
-        group_members=form.group_members.data.split(',')
-        for members in group_members:
-            if(UserTable.query.filter_by(username=members).first()):
-                temp_member=UserTable.query.filter_by(username=members).first()
-                temp_group_members=GroupMembers(member_id=temp_member.id,member_name=temp_member.username,group_id=newgroup.id)
-                db.session.add(temp_group_members)
-                db.session.commit()
-        flash('Group created successful')
-        return redirect(url_for('dashboard.dashboard'))
+        if(create_new_group(form)):
+            flash('Group created successful')
+            return redirect(url_for('dashboard.dashboard'))
     return render_template('dashboard/creategroup.html',form=form)
 
                 
 @bp.route('/group/<group_id>/groupinfo',methods=['POST','GET'])
 def groupinfo(group_id):
-    if not(current_user.is_authenticated):
+    if not(is_authenticated()):
         flash('Sorry, you are not logged in. Please login to continue')
         return redirect(url_for('auth.login'))
-    user=UserTable.query.filter_by(username=current_user.username).first()
-    group=GroupTable.query.filter_by(id=group_id).first()
-    members=GroupMembers.query.filter_by(group_id=group_id).all()
-    members_names=[]
-    for member in members:
-        members_names.append([member.member_name,UserTable.query.filter_by(id=member.member_id).first()])
+    if not(GroupMembers.query.filter_by(member_id=current_user.id).filter_by(group_id=group_id).all()):
+        return render_template('errors/404.html'), 404
+    user=get_current_user()
+    group=get_group_single(group_id)
+    members=get_group_members(group_id)
+    members_names=get_group_members_names(members)
     admin=UserTable.query.filter_by(id=group.admin_id).first()
     form=AddMembers()
     description_form=ChangeGroupDescription()
     if description_form.validate_on_submit():
-        GroupTable.query.filter_by(id=group_id).update({"group_description":description_form.description.data})
-        db.session.commit()
+        change_group_description(description_form,group_id)
         redirect(url_for('dashboard.groupinfo',group_id=group_id))
     if form.validate_on_submit():
-        group_members=form.members.data.split(',')
-        print(group_members )
-        for members in group_members:
-            if (UserTable.query.filter_by(username=members).first()):
-                if (GroupMembers.query.filter_by(member_name=members).filter_by(group_id=group.id).first()):
-                    continue
-                temp_member=UserTable.query.filter_by(username=members).first()
-                temp_group_members=GroupMembers(member_id=temp_member.id,member_name=temp_member.username,group_id=group.id)
-                db.session.add(temp_group_members)
-                db.session.commit()
-                return redirect(url_for('dashboard.groupinfo',group_id=group_id))
+        add_group_members(form,group_id)
+        return redirect(url_for('dashboard.groupinfo',group_id=group_id))
     if(admin.id!=user.id):
         return render_template('dashboard/showmembers.html',currentid=current_user.id,groupid=group_id,members=members_names,group=group.groupname,description=group.group_description,admin=admin.username,is_admin=False,form=form,changedesc=description_form)
     else:
@@ -117,9 +87,7 @@ def leavegroup(groupid):
     if(GroupTable.query.filter_by(id=groupid).first().admin_id==current_user.id):
         flash("You can't leave group in which you are the admin. You can delete the group itself.")
         return redirect(url_for('dashboard.dashboard'))
-    groupname=GroupTable.query.filter_by(id=groupid).first().groupname
-    GroupMembers.query.filter_by(member_id=current_user.id).filter_by(group_id=groupid).delete()
-    db.session.commit()
+    groupname=leave_group(groupid)
     flash('You left the group "'+groupname+'"')
     return redirect(url_for('dashboard.dashboard'))
 
@@ -128,11 +96,7 @@ def deletegroup(groupid):
     if(GroupTable.query.filter_by(id=groupid).first().admin_id !=current_user.id):
         flash('Unauthorised action')
         return redirect(url_for('dashboard.dashboard'))
-    groupname=GroupTable.query.filter_by(id=groupid).first().groupname
-    GroupMembers.query.filter_by(group_id=groupid).delete()
-    Message.query.filter_by(group_id=groupid).delete()
-    GroupTable.query.filter_by(id=groupid).delete()
-    db.session.commit()
+    groupname=delete_group(groupid)
     flash('You deleted the group "'+groupname+'"')
     return redirect(url_for('dashboard.dashboard'))
 
@@ -141,9 +105,7 @@ def removemember(groupid,memberid):
     if(GroupTable.query.filter_by(id=groupid).first().admin_id !=current_user.id):
         flash('Unauthorised action')
         return redirect(url_for('dashboard.dashboard'))
-    groupmembername=GroupMembers.query.filter_by(member_id=memberid).filter_by(group_id=groupid).first().member_name
-    GroupMembers.query.filter_by(member_id=memberid).filter_by(group_id=groupid).delete()
-    db.session.commit()
+    groupmembername=remove_group_member(memberid,groupid)
     flash('You removed "'+groupmembername+'" from the group')
     return redirect(url_for('dashboard.groupinfo',group_id=groupid))
 

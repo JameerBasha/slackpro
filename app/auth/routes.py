@@ -4,10 +4,11 @@ from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegisterForm
 from app.models import UserTable
+from app.services import is_authenticated
 
 @bp.route('/login',methods=['GET','POST'])
 def login():
-    if current_user.is_authenticated:
+    if is_authenticated():
         return redirect(url_for('main.index'))
     form=LoginForm()
     if form.validate_on_submit():

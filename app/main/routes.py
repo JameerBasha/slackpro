@@ -11,13 +11,12 @@ from app.services import db_committer, is_authenticated
 
 
 @socketio.on('messagetoserver')
-def test_message(message):
+def message_from_client(message):
     if not(is_authenticated()):
-        flash('Sorry you are not logged in. Please login to continue')
         return redirect(url_for('auth.login'))
-    user=UserTable.query.filter_by(username=message['username']).first()
+    user=UserTable.query.filter_by(id=current_user.id).first()
     group=GroupTable.query.filter_by(id=message['groupidnumber']).first()
-    messageobj=Message(message=message['message'],group_id=group.id,user_id=user.id,user_name=user.username)
+    messageobj=Message(message=message['message'],group_id=group.id,user_id=current_user.id,user_name=user.username)
     db_committer(messageobj)
     emit(str(message['groupidnumber']), message, broadcast=True)
 

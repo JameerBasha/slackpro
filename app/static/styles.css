@@ -10,3 +10,7 @@ body{
 .top-message{
     font-size:1.3rem;
 }
+.login-inputs{
+    width:25%;
+    text-align:center;
+}

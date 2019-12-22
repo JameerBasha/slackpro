@@ -7,12 +7,12 @@
         {{ form.hidden_tag() }}
         <h5>
             {{ form.username.label(style='font-size:1.5rem;') }}<br>
-            {{ form.username(style='width:30%') }}<br>
+            {{ form.username(class='login-inputs',style='width:25%') }}<br>
             {% for error in form.username.errors %}
             <span style='color:red;'>[{{ error }}]</span><br>
             {% endfor %}
             {{ form.password.label(style='font-size:1.5rem; ') }}<br>
-            {{ form.password(size=32, style='width:30%') }}<br>
+            {{ form.password(class='login-inputs',style='width:25%') }}<br>
             {% for error in form.password.errors %}
             <span style='color:red'>[{{ error }}]</span><br>
             {% endfor %}
