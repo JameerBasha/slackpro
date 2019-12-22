@@ -5,10 +5,11 @@ from app.dashboard import bp
 from app.models import UserTable,GroupTable,GroupMembers,Message
 from app.dashboard.forms import MessageForm, CreateGroup, AddMembers
 from flask_socketio import send,emit
+from app.services import is_authenticated
 
 @bp.route('/dashboard',methods=['GET','POST'])
 def dashboard():
-    if current_user.is_authenticated:
+    if is_authenticated():
         user=UserTable.query.filter_by(username=current_user.username).first()
         groups_as_member=GroupMembers.query.filter_by(member_id=user.id).all()
         groups=[]
@@ -26,19 +27,16 @@ def group(groupid):
         flash('Sorry, you are not logged in. Please login to continue')
         return redirect(url_for('auth.login'))
     user=UserTable.query.filter_by(username=current_user.username).first()
-    group=GroupTable.query.filter_by(id=groupid).first()
-
+    group=GroupTable.query.filter_by(id=groupid).all()
+    if not(group):
+        return render_template('errors/404.html'), 404
     page = request.args.get('page', 1, type=int)
-
+    group=GroupTable.query.filter_by(id=groupid).first()
     if(GroupMembers.query.filter_by(group_id=group.id,member_id=user.id).order_by(Message.message_time.desc())):
         messages=Message.query.filter_by(group_id=group.id).order_by(Message.message_time.desc()).paginate(page,3,False)
         form=MessageForm()
         if form.validate_on_submit():
-            messageobj=Message()
-            messageobj.message=form.message.data
-            messageobj.group_id=group.id
-            messageobj.user_id=user.id
-            messageobj.user_name=user.username
+            messageobj=Message(message=form.message.data,group_id=group_id,user_id=user.id,user_name=user.username)
             db.session.add(messageobj)
             db.session.commit()
 
@@ -60,26 +58,17 @@ def creategroup():
     user=UserTable.query.filter_by(username=current_user.username).first()
     form=CreateGroup()
     if form.validate_on_submit():
-        newgroup=GroupTable()
-        newgroup.admin_id=user.id
-        newgroup.groupname=form.group_name.data
-        newgroup.group_description=form.group_description.data
+        newgroup=GroupTable(admin_id=user.id,groupname=form.group_name.data,group_description=form.group_description.data)
         db.session.add(newgroup)
         db.session.commit()
-        group_admin=GroupMembers()
-        group_admin.member_name=user.username
-        group_admin.member_id=user.id
-        group_admin.group_id=newgroup.id
+        group_admin=GroupMembers(member_name=user.username,member_id=user.id,group_id=newgroup.id)
         db.session.add(group_admin)
         db.session.commit()
         group_members=form.group_members.data.split(',')
         for members in group_members:
             if(UserTable.query.filter_by(username=members).first()):
-                temp_group_members=GroupMembers()
                 temp_member=UserTable.query.filter_by(username=members).first()
-                temp_group_members.member_id=temp_member.id
-                temp_group_members.member_name=temp_member.username
-                temp_group_members.group_id=newgroup.id
+                temp_group_members=GroupMembers(member_id=temp_member.id,member_name=temp_member.username,group_id=newgroup.id)
                 db.session.add(temp_group_members)
                 db.session.commit()
         flash('Group created successful')
@@ -107,14 +96,9 @@ def groupinfo(group_id):
         for members in group_members:
             if (UserTable.query.filter_by(username=members).first()):
                 if (GroupMembers.query.filter_by(member_name=members).filter_by(group_id=group.id).first()):
-                    print('))))))))))))))))))))))))))))))0')
                     continue
-                print('__________________________')
-                temp_group_members=GroupMembers()
                 temp_member=UserTable.query.filter_by(username=members).first()
-                temp_group_members.member_id=temp_member.id
-                temp_group_members.member_name=temp_member.username
-                temp_group_members.group_id=group_id
+                temp_group_members=GroupMembers(member_id=temp_member.id,member_name=temp_member.username,group_id=group.id)
                 db.session.add(temp_group_members)
                 db.session.commit()
                 return redirect(url_for('dashboard.groupinfo',group_id=group_id))

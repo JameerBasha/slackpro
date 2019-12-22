@@ -23,9 +23,11 @@ def create_app(config_class=Config):
 	login.login_view='auth.login'
 	migrate.init_app(app,db)
 	moment.init_app(app)
+
+
+	
+
 	socketio.init_app(app)
-
-
 
 
 	from app.auth import bp as auth_bp
@@ -39,10 +41,16 @@ def create_app(config_class=Config):
 
 	from app.dashboard import bp as dashboard_bp
 	app.register_blueprint(dashboard_bp)
-	
-	socketio.run(app)
 
 	return app
 
+if __name__ == '__main__':
+    # socketio.run(app)
+	pass
+
+
 
 from app import models
+
+
+# run with  gunicorn -k gevent -w 1 slackpro:app

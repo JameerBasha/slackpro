@@ -6,30 +6,20 @@ from flask_login import current_user
 from app import socketio
 from flask_socketio import send,emit
 from datetime import datetime
+from app.services import db_committer, is_authenticated
 
 
 
-@socketio.on('my broadcast event')
+@socketio.on('messagetoserver')
 def test_message(message):
-    print(message)
+    if not(is_authenticated()):
+        flash('Sorry you are not logged in. Please login to continue')
+        return redirect(url_for('auth.login'))
     user=UserTable.query.filter_by(username=message['username']).first()
     group=GroupTable.query.filter_by(id=message['groupidnumber']).first()
-    messageobj=Message()
-    messageobj.message=message['message']
-    messageobj.group_id=group.id
-    messageobj.user_id=user.id
-    messageobj.user_name=user.username
-    db.session.add(messageobj)
-    db.session.commit()
-    emit(str(message['groupidnumber']), {'message': message['message'],'username': message['username'],'groupidnumber':message['groupidnumber'],'time':message['time']}, broadcast=True)
-
-@socketio.on('connect')
-def test_connect():
-    print('Client connected')
-
-@socketio.on('disconnect')
-def test_disconnect():
-    print('Client disconnected')
+    messageobj=Message(message=message['message'],group_id=group.id,user_id=user.id,user_name=user.username)
+    db_committer(messageobj)
+    emit(str(message['groupidnumber']), message, broadcast=True)
 
 
 @bp.route('/')

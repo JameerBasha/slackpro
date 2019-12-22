@@ -3,7 +3,6 @@
 {% block content %}
 <script type='text/javascript'>
     $(document).ready(function () {
-
         var socket = io.connect();
         var groupidnumber = (document.getElementById('groupidnumber').innerText)
         var username = (document.getElementById('username').innerText)
@@ -24,7 +23,7 @@
             if (document.getElementById('messageinputbox').value === '') {
                 return false;
             }
-            socket.emit('my broadcast event', {
+            socket.emit('messagetoserver', {
                 message: (document.getElementById('messageinputbox').value),
                 username: (document.getElementById('username').innerText),
                 groupidnumber: (document.getElementById('groupidnumber').innerText),
