@@ -50,7 +50,8 @@ def creategroup():
         return redirect(url_for('auth.login'))
     form=CreateGroup()
     if form.validate_on_submit():
-        if(create_new_group(form)):
+        create_group_bool=create_new_group(form)
+        if(create_group_bool):
             flash('Group created successful')
             return redirect(url_for('dashboard.dashboard'))
     return render_template('dashboard/creategroup.html',form=form)

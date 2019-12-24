@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_socketio import SocketIO, send
+from elasticsearch import Elasticsearch
 
 db=SQLAlchemy()
 login=LoginManager()
@@ -23,8 +24,9 @@ def create_app(config_class=Config):
 	login.login_view='auth.login'
 	migrate.init_app(app,db)
 	moment.init_app(app)
-
-
+	
+	app.elasticsearch=Elasticsearch([app.config['ELASTICSEARCH_URL']])\
+		if app.config['ELASTICSEARCH_URL'] else None
 	
 
 	socketio.init_app(app)
