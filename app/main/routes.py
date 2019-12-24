@@ -46,17 +46,20 @@ def search():
     if not g.search_form.validate():
         return redirect(url_for('main.dashboard'))
     groups,total_groups=query_index('group_table',g.search_form.q.data,1,5)
-    message,total_groups=query_index('message',g.search_form.q.data,1,5)
+    messages,total_message=query_index('message',g.search_form.q.data,1,5)
     users,total_users=query_index('user_table',g.search_form.q.data,1,5)
-    message=message.filter_by(user_id=current_user.id)
     current_user_group_id=get_list_of_group_id()
-    print(groups.all())
-    groups_searched_for=[]
+    print(groups)
+    print(current_user_group_id)
+    groups_searched=[]
     for group in groups:
-        if group.id in current_user_group_id:
-            groups_searched_for.append(group)
-    print(groups_searched_for)
-    print(users.all())
-    print(message.all())
-    return 'helloworld'
-    #return render_template('search.html',title='Search',users=users,groups=groups,message=message)
+        if(group in current_user_group_id):
+            groups_searched.append(GroupTable.query.filter_by(id=group).first())
+    users_searched=[]
+    for user in users:
+        users_searched.append(UserTable.query.filter_by(id=user).first())
+    message_searched=[]
+    for message in messages:
+        if(Message.query.filter_by(id=message).first().user_id ==  current_user.id):
+            message_searched.append(Message.query.filter_by(id=message).first())
+    return render_template('search.html',title='Search',users=users_searched,groups=groups_searched,messages=message_searched)

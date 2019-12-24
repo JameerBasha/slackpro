@@ -34,8 +34,8 @@ def register():
         db.session.add(user)
         db.session.commit()
         add_to_index('user_table',user)
-        flash('Registration successful.')
-        return redirect(url_for('dashboard.dashboard'))
+        flash('Registration successful. Please login.')
+        return redirect(url_for('auth.login'))
     return render_template('auth/register.html',title='Register',form=form)
 
 @bp.route('/logout')

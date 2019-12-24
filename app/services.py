@@ -25,7 +25,7 @@ def get_list_of_group_id():
 	groups_as_member=GroupMembers.query.filter_by(member_id=user.id).all()
 	group_id=[]
 	for group in groups_as_member:
-		group_id.append(group.id)
+		group_id.append(group.group_id)
 	return group_id
 
 def get_current_user():
@@ -37,6 +37,7 @@ def create_new_group(form):
 	newgroup=GroupTable(admin_id=current_user.id,groupname=form.group_name.data,group_description=form.group_description.data)
 	db.session.add(newgroup)
 	db.session.commit()
+	print(newgroup)
 	add_to_index('group_table',newgroup)
 	group_members=form.group_members.data.split(',')
 	if user.username not in group_members:
@@ -92,13 +93,19 @@ def add_group_members(form,group_id):
 			db.session.commit()
 
 def change_group_description(form,group_id):
-	GroupTable.query.filter_by(id=group_id).update({"group_description":form.description.data})
+	group_table=GroupTable.query.filter_by(id=group_id).update({"group_description":form.description.data})
 	db.session.commit()
+	add_to_index('group_table',group_table.first())
 
 def delete_group(groupid):
 	groupname=GroupTable.query.filter_by(id=groupid).first().groupname
 	GroupMembers.query.filter_by(group_id=groupid).delete()
+	messages=Message.query.filter_by(group_id=groupid).all()
+	for message in messages:
+		remove_from_index('message',message)
 	Message.query.filter_by(group_id=groupid).delete()
+	group=GroupTable.query.filter_by(id=groupid).first()
+	remove_from_index('group_table',group)
 	GroupTable.query.filter_by(id=groupid).delete()
 	db.session.commit()
 	return groupname

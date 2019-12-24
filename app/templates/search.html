@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    <h4 style='color:green'>Users</h4>
+    {% if not(users) %}
+    <h5>No result</h5>
+    {% else %}
+    <div class="collection">
+        {% for user in users %}
+        <a href="{{ url_for('dashboard.user',username=user.username) }}" class="collection-item" style='color:black;'>
+            <h6><b>{{ user.username }}</b></h6>
+        </a>
+        {% endfor %}
+    </div>
+
+    {% endif %}
+    <br>
+    <h4 style='color:green'>Groups</h4>
+    {% if not(groups) %}
+    <h5>No result</h5>
+    {% else %}
+    <div class="collection">
+        {% for group in groups %}
+        <a href="{{ url_for('dashboard.group',groupid=group.id) }}" class="collection-item" style='color:black;'>
+            <h6><b>{{ group.groupname }}</b></h6>
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <br>
+    <h4 style='color:green'>Messages</h4>
+    {% if not(messages) %}
+    <h5>No result</h5>
+    {% else %}
+
+    <ul class="collapsible" id='messagecontainer'>
+        {% for message in messages %}
+        <li><a href="{{ url_for('dashboard.group',groupid=message.group_id) }}" style='color:black'>
+                <div class="collapsible-header">
+                    <img src="https://avatars.dicebear.com/v2/gridy/{{ message.user_name }}.svg" class='avatar-image'>
+                    <span><b>{{ message.user_name }}</b></span><br>
+                    <span>{{ message.message }}</span>
+                    <p>Sent : {{ moment(message.message_time).calendar() }}
+                        ({{ moment(message.message_time).fromNow() }})
+                    </p>
+                </div>
+                <div class="collapsible-body">
+                </div>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <br>
+</div>
+{% endblock %}

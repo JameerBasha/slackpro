@@ -20,7 +20,7 @@
 </head>
 <!-- //pdb cmd debugging -->
 
-<body>
+<body style='padding-left:10%;padding-right:10%'>
 
 
 
@@ -33,14 +33,22 @@
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
             <ul class="right hide-on-med-and-down">
                 {% if not(current_user.is_anonymous) %}
+
+                {% if g.search_form %}
+                <li style='margin:0px'>
+                    <form method='get' action='{{ url_for("main.search") }}'>
+                        <div class="input-field">
+                            {{ g.search_form.q(size=20, placeholder=g.search_form.q.label.text,id='search',type='search') }}
+                            <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                            <i class="material-icons">close</i>
+                        </div>
+                    </form>
+                </li>
+                {% endif %}
+
                 <li><a href="/dashboard">Dashboard</a></li>
                 <li><a href="/creategroup">Create Group</a></li>
                 <li><a href="/logout">Logout</a></li>
-                {% if g.search_form %}
-                <form method='get' action='{{ url_for("main.search") }}'>
-                    {{ g.search_form.q(size=20, placeholder=g.search_form.q.label.text) }}
-                </form>
-                {% endif %}
                 {% else %}
                 <li><a href="/login">Login</a></li>
                 <li><a href="/register">Register</a></li>
@@ -48,6 +56,15 @@
             </ul>
             <ul class="side-nav" id="mobile-demo">
                 {% if not(current_user.is_anonymous) %}
+
+                {% if g.search_form %}
+                <li>
+                    <form method='get' action='{{ url_for("main.search") }}'>
+                        {{ g.search_form.q(size=20, placeholder=g.search_form.q.label.text) }}
+                    </form>
+                </li>
+                {% endif %}
+
                 <li><a href="/dashboard">Dashboard</a></li>
                 <li><a href="/creategroup">Create Group</a></li>
                 <li><a href="/logout">Logout</a></li>

@@ -7,6 +7,7 @@ from app.dashboard.forms import MessageForm, CreateGroup, AddMembers, ChangeGrou
 from flask_socketio import send,emit
 from app.services import is_authenticated, get_list_of_groups, get_current_user,create_new_group, get_group, create_message, get_group_single, get_group_members_names, get_group_members, leave_group, add_group_members, change_group_description, delete_group, remove_group_member
 
+
 @bp.route('/dashboard',methods=['GET','POST'])
 def dashboard():
     if is_authenticated():

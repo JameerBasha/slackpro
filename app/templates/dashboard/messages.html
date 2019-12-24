@@ -4,7 +4,7 @@
 <script type='text/javascript' src='{{ url_for("static",filename="message.js") }}'></script>
 <span style='display:none' id='groupidnumber'>{{ groupid }}</span>
 <span style='display:none' id='username'>{{ username }}</span>
-<div style='padding-left:10%; padding-right:10%'>
+<div>
     <a href='{{ url_for("dashboard.groupinfo",group_id=groupid) }}'><button class='btn green'> Group info </button></a>
     <h3>{{ groupname }}</h3>
     <h4>{{ groupdescription }}</h4>
