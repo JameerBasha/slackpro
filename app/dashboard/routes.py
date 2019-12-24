@@ -110,3 +110,13 @@ def removemember(groupid,memberid):
     flash('You removed "'+groupmembername+'" from the group')
     return redirect(url_for('dashboard.groupinfo',group_id=groupid))
 
+@bp.route('/user/<username>',methods=['POST','GET'])
+def user(username):
+    if not(is_authenticated()):
+        flash('Sorry, you are not logged in. Please login to continue')
+        return redirect(url_for('auth.login'))
+    user=UserTable.query.filter_by(username=username).first()
+    if not(user):
+        flash('Sorry user is not found')
+        return redirect(url_for('dashboard.dashboard'))
+    return render_template('dashboard/user.html',user=user)

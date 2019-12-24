@@ -1,11 +1,8 @@
 from app import db
 from flask_login import current_user
 from app.models import GroupMembers, UserTable, GroupTable, Message
+from app.search import add_to_index,remove_from_index, query_index
 
-def db_committer(obj):
-	db.session.add(obj)
-	db.session.commit()
-	return True
 
 def is_authenticated():
 	if(current_user.is_authenticated):
@@ -23,6 +20,14 @@ def get_list_of_groups():
 			groups.append([temp_group.groupname,temp_group.id,temp_group.group_description])
 	return groups,user.username
 
+def get_list_of_group_id():
+	user=UserTable.query.filter_by(username=current_user.username).first()
+	groups_as_member=GroupMembers.query.filter_by(member_id=user.id).all()
+	group_id=[]
+	for group in groups_as_member:
+		group_id.append(group.id)
+	return group_id
+
 def get_current_user():
 	user=UserTable.query.filter_by(username=current_user.username).first()
 	return user
@@ -31,9 +36,11 @@ def create_new_group(form):
 	user=get_current_user()
 	newgroup=GroupTable(admin_id=current_user.id,groupname=form.group_name.data,group_description=form.group_description.data)
 	db.session.add(newgroup)
-	group_admin=GroupMembers(member_name=user.username,member_id=user.id,group_id=newgroup.id)
-	db.session.add(group_admin)
+	db.session.commit()
+	add_to_index('group_table',newgroup)
 	group_members=form.group_members.data.split(',')
+	if user.username not in group_members:
+		group_members.append(user.username)
 	for members in group_members:
 	    if(UserTable.query.filter_by(username=members).first()):
 	        temp_member=UserTable.query.filter_by(username=members).first()
@@ -50,6 +57,7 @@ def create_message(form):
 	messageobj=Message(message=form.message.data,group_id=group_id,user_id=user.id,user_name=user.username)
 	db.session.add(messageobj)
 	db.session.commit()
+	add_to_index('message',messageobj)
 	return True
 
 def get_group_single(group_id):

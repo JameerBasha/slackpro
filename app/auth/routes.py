@@ -5,6 +5,7 @@ from app.auth import bp
 from app.auth.forms import LoginForm, RegisterForm
 from app.models import UserTable
 from app.services import is_authenticated
+from app.search import add_to_index
 
 @bp.route('/login',methods=['GET','POST'])
 def login():
@@ -32,8 +33,9 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Registration successful. Please login to continue')
-        return redirect(url_for('auth.login'))
+        add_to_index('user_table',user)
+        flash('Registration successful.')
+        return redirect(url_for('dashboard.dashboard'))
     return render_template('auth/register.html',title='Register',form=form)
 
 @bp.route('/logout')

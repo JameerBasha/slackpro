@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style='padding-left:10%;padding-right:10%'>
+    <img src="https://avatars.dicebear.com/v2/gridy/{{ user.username }}.svg" class='avatar-image'>
+    <h4 style='color:green'>Username</h4>
+    <h5>{{ user.username }}</h5>
+    <h4 style='color:green'>Email</h4>
+    <h5>{{ user.email }}</h5>
+</div>
+{% endblock  %}
