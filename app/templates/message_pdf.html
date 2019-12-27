@@ -1,0 +1,41 @@
+<html>
+
+<head>
+    <script type='text/javascript'
+        src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js'></script>
+    <meta name="viewport" content="width = device-width, initial-scale = 1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
+    </script>
+    {% if title %}
+    <title>{{ title }} - SlackPro</title>
+    {% else %}
+    <title>SlackPro</title>
+    {% endif %}
+</head>
+
+<body style='padding-left:10%;padding-right:10%'>
+    <span style='display:none' id='groupidnumber'>{{ groupid }}</span>
+    <span style='display:none' id='username'>{{ username }}</span>
+    <div>
+        <h3>Group Name : {{ groupname }}</h3>
+        <h4>Group Description: {{ groupdescription }}</h4>
+        <ul class="collapsible" id='messagecontainer'>
+            {% for message in messages %}
+            <li>
+                <div class="collapsible-header">
+                    <img src="https://avatars.dicebear.com/v2/gridy/{{ message.user_name }}.svg" class='avatar-image'
+                        style='width:50px;height:50px'>
+                    <span><b>{{ message.user_name }}</b></span><br>
+                    <span>{{ message.message }}</span><br>
+                    <span>Sent at : {{ message.message_time }}</span>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+
+</html>

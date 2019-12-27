@@ -6,3 +6,5 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI=os.environ.get('SQLALCHEMY_DATABASE_URI') or 'postgresql:///slackpro'
     SQLALCHEMY_TRACK_MODIFICATIONS=False
     ELASTICSEARCH_URL=os.environ.get('ELASTICSEARCH_URL') or 'localhost:9200'
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'

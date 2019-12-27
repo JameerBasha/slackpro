@@ -121,3 +121,6 @@ def user(username):
         flash('Sorry user is not found')
         return redirect(url_for('dashboard.dashboard'))
     return render_template('dashboard/user.html',user=user)
+
+
+

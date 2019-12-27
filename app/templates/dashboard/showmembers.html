@@ -8,6 +8,34 @@
             document.getElementById('members').value = ''
         }
     };
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    async function polling(download_url) {
+        let newpromise = await fetch(download_url, { method: 'GET' });
+        let downloadDone = await newpromise.text();
+        console.log(downloadDone);
+        if (downloadDone != 'wait') {
+            download(download_url, 'chat_details.pdf', 'application/pdf');
+        }
+        return 'fail'
+    }
+    async function download() {
+        var url = 'http://' + window.location.host + '{{ url_for("main.download_content",group_id=groupid,task_id=0)}}';
+        let promise = await fetch(url, {
+            method: 'GET'
+        });
+        let responseValue = await promise.text();
+        var download_url = 'http://' + window.location.host + '/download/' + responseValue;
+        for (let i = 0; i < 20; i++) {
+            await sleep(3000);
+            var result = await polling(download_url);
+            console.log(result)
+            if (result == 'success') {
+                break;
+            }
+        }
+    }
 </script>
 <div>
     <h4 style='color:green'>Group Name<br>
@@ -51,5 +79,12 @@
     <a href='{{ url_for("dashboard.leavegroup",groupid=groupid) }}'><button class=' btn green'>Leave
             group</button></a>
     {% endif %}
-</div>
-{% endblock %}
+    {% if is_admin %}
+    <br>
+    <br>
+    <a>
+        <button class='btn green' onclick="download()">Download Chat</button>
+    </a>
+    {% endif %}
+    <br>
+</div> {% endblock %}
