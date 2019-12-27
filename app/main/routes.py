@@ -1,5 +1,5 @@
 from app.main import bp
-from flask import render_template,url_for,flash,request,redirect, jsonify, send_from_directory
+from flask import render_template,url_for,flash,request,redirect, jsonify, send_file
 from app import db
 from app.models import UserTable,GroupTable,Message, GroupMembers
 from flask_login import current_user
@@ -17,6 +17,7 @@ import pdfkit
 import os
 # from celery import AsyncResult
 from app import app
+import io
 
 
 @socketio.on('messagetoserver')
@@ -55,8 +56,6 @@ def search():
     messages,total_message=query_index('message',g.search_form.q.data,1,5)
     users,total_users=query_index('user_table',g.search_form.q.data,1,5)
     current_user_group_id=get_list_of_group_id()
-    print(groups)
-    print(current_user_group_id)
     groups_searched=[]
     for group in groups:
         if(group in current_user_group_id):
@@ -78,7 +77,6 @@ def search():
 @celery.task()
 def download_chat(groupid,user_id):
     with app.app_context():
-        print(os.getcwd())
         group = GroupTable.query.filter_by(id=groupid).first()
         user=UserTable.query.filter_by(id=user_id).first()
         if(GroupMembers.query.filter_by(group_id=group.id, member_id=user.id).order_by(Message.message_time.desc())):
@@ -103,20 +101,30 @@ def download_content(group_id,task_id):
     if not(GroupTable.query.filter_by(id=group_id).first().admin_id==current_user.id):
         return 'Unauthorised Action'
     download_object=download_chat.apply_async(args=[group_id,current_user.id])
-    print(download_object.id)
     return download_object.task_id
 
 @bp.route('/download/<task_id>')
 def download(task_id):
     if not(is_authenticated()):
         return 'Not Logged In'
-    print('_________________')
     res = download_chat.AsyncResult(task_id=task_id)
-    print(res)
-    print('_________________')
-    print(res.status)
     if(res.status=='PENDING'):
         return 'wait'
     if(res.status == 'SUCCESS'):
         return res.result
-        return send_from_directory(directory='temp', filename=res.result+'.pdf')
+
+
+
+@bp.route('/download_file/<filename>')
+def download_file(filename):
+    file_path = 'temp/'+filename+'.pdf'
+
+    return_data = io.BytesIO()
+    with open(file_path, 'rb') as fo:
+        return_data.write(fo.read())
+    return_data.seek(0)
+
+    os.remove(file_path)
+
+    return send_file(return_data, mimetype='application/pdf',
+                     attachment_filename=filename+'.pdf')

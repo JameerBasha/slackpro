@@ -37,7 +37,6 @@ def create_new_group(form):
 	newgroup=GroupTable(admin_id=current_user.id,groupname=form.group_name.data,group_description=form.group_description.data)
 	db.session.add(newgroup)
 	db.session.commit()
-	print(newgroup)
 	add_to_index('group_table',newgroup)
 	group_members=form.group_members.data.split(',')
 	if user.username not in group_members:
