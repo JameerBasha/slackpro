@@ -15,9 +15,10 @@ from random import randint
 from app import celery
 import pdfkit
 import os
-# from celery import AsyncResult
 from app import app
 import io
+import arrow
+import importlib
 
 
 @socketio.on('messagetoserver')
@@ -85,7 +86,7 @@ def download_chat(groupid,user_id):
         if(GroupMembers.query.filter_by(group_id=group.id, member_id=user.id).order_by(Message.message_time.desc())):
             messages = Message.query.filter_by(group_id=group.id).order_by(
                 Message.message_time.desc()).all()
-            output =  render_template('message_pdf.html', username=user.username, title=group.groupname, messages=messages, groupname=group.groupname, groupdescription=group.group_description, groupid=groupid)
+            output =  render_template('message_pdf.html', imp0rt = importlib.import_module,username=user.username, title=group.groupname, messages=messages, groupname=group.groupname, groupdescription=group.group_description, groupid=groupid)
         randnum=str(randint(1,9999999999999999999))
         randpath='temp/'+randnum+'.html'
         f=open(randpath,'w')
