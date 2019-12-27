@@ -35,9 +35,10 @@ celery.conf.update(app.config)
 
 
 
-app.elasticsearch=Elasticsearch([app.config['ELASTICSEARCH_URL']])\
+elasticsearch=Elasticsearch([app.config['ELASTICSEARCH_URL']])\
 	if app.config['ELASTICSEARCH_URL'] else None
-
+if not(elasticsearch.ping()):
+	elasticsearch=None
 
 socketio.init_app(app)
 

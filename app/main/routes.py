@@ -3,11 +3,11 @@ from flask import render_template,url_for,flash,request,redirect, jsonify, send_
 from app import db
 from app.models import UserTable,GroupTable,Message, GroupMembers
 from flask_login import current_user
-from app import socketio
+from app import socketio,elasticsearch
 from flask_socketio import send,emit
 from datetime import datetime
 from app.services import is_authenticated
-from flask import g
+from flask import g,current_app
 from app.dashboard.forms import SearchForm
 from app.services import get_list_of_group_id
 from app.search import add_to_index,query_index, remove_from_index
@@ -51,7 +51,10 @@ def search():
         flash('Sorry you are not logged in. Login to continue')
         return redirect(url_for('auth.login'))
     if not g.search_form.validate():
-        return redirect(url_for('main.dashboard'))
+        return redirect(url_for('dashboard.dashboard'))
+    if not(elasticsearch):
+        flash("Search is not available now.")
+        return redirect(url_for('dashboard.dashboard'))
     groups,total_groups=query_index('group_table',g.search_form.q.data,1,5)
     messages,total_message=query_index('message',g.search_form.q.data,1,5)
     users,total_users=query_index('user_table',g.search_form.q.data,1,5)

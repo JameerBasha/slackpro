@@ -6,6 +6,7 @@ from app.auth.forms import LoginForm, RegisterForm
 from app.models import UserTable
 from app.services import is_authenticated
 from app.search import add_to_index
+from flask import current_app
 
 @bp.route('/login',methods=['GET','POST'])
 def login():

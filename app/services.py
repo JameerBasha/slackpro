@@ -2,13 +2,14 @@ from app import db
 from flask_login import current_user
 from app.models import GroupMembers, UserTable, GroupTable, Message
 from app.search import add_to_index,remove_from_index, query_index
-
+from flask import current_app
 
 def is_authenticated():
 	if(current_user.is_authenticated):
 		return True
 	else:
 		return False
+
 
 def get_list_of_groups():
 	user=UserTable.query.filter_by(username=current_user.username).first()
