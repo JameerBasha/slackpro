@@ -32,11 +32,11 @@ moment.init_app(app)
 
 celery=Celery(app.name,broker='redis://localhost:6379',backend='redis://localhost:6379')
 celery.conf.update(app.config)
+auth = ('elastic', 'JyvM68PAVaRSa1c4UM9NZvM7')
+elasticsearch=Elasticsearch("http://19d6d3ac74d34f8fb6ed9b7743c2296b.ap-southeast-1.aws.found.io:9243/", http_auth=auth, use_ssl=True, verify_certs=False)
 
-
-
-elasticsearch=Elasticsearch([app.config['ELASTICSEARCH_URL']])\
-	if app.config['ELASTICSEARCH_URL'] else None
+#elasticsearch=Elasticsearch([app.config['ELASTICSEARCH_URL']])\
+	# if app.config['ELASTICSEARCH_URL'] else None
 if not(elasticsearch.ping()):
 	elasticsearch=None
 

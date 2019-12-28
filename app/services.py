@@ -93,9 +93,10 @@ def add_group_members(form,group_id):
 			db.session.commit()
 
 def change_group_description(form,group_id):
-	group_table=GroupTable.query.filter_by(id=group_id).update({"group_description":form.description.data})
+	GroupTable.query.filter_by(id=group_id).update({"group_description":form.description.data})
 	db.session.commit()
-	add_to_index('group_table',group_table.first())
+	group_object=GroupTable.query.filter_by(id=group_id).first()
+	add_to_index('group_table',group_object)
 
 def delete_group(groupid):
 	groupname=GroupTable.query.filter_by(id=groupid).first().groupname
