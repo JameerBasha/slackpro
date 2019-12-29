@@ -19,7 +19,7 @@ from app import app
 import io
 import arrow
 import importlib
-
+from flask_weasyprint import HTML,render_pdf
 
 @socketio.on('messagetoserver')
 def message_from_client(message):
@@ -88,13 +88,13 @@ def download_chat(groupid,user_id):
                 Message.message_time.desc()).all()
             output =  render_template('message_pdf.html', imp0rt = importlib.import_module,username=user.username, title=group.groupname, messages=messages, groupname=group.groupname, groupdescription=group.group_description, groupid=groupid)
         randnum=str(randint(1,9999999999999999999))
-        randpath='temp/'+randnum+'.html'
-        f=open(randpath,'w')
-        f.write(output)
+        randpath='temp/'+randnum+'.pdf'
+        pdf_file=None
+        with app.test_request_context(base_url='example.net'):
+            pdf_file=(HTML(string=output)).write_pdf()
+        f=open(randpath,'wb')
+        f.write(pdf_file)
         f.close()
-        pdf=pdfkit.from_file(randpath,'temp/'+randnum+'.pdf')
-        if os.path.exists(randpath):
-            os.remove(randpath)
         return randnum
 
 

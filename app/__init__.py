@@ -9,14 +9,13 @@ from flask_socketio import SocketIO, send
 from elasticsearch import Elasticsearch
 from celery import Celery
 import arrow
-
+from flask_cors import CORS
 
 
 db=SQLAlchemy()
 login=LoginManager()
 moment=Moment()
 socketio=SocketIO()
-
 
 # def create_app(config_class=Config):
 
@@ -28,8 +27,6 @@ login.init_app(app)
 login.login_view='auth.login'
 migrate.init_app(app,db)
 moment.init_app(app)
-
-
 celery=Celery(app.name,broker='redis://localhost:6379',backend='redis://localhost:6379')
 celery.conf.update(app.config)
 auth = ('elastic', 'JyvM68PAVaRSa1c4UM9NZvM7')
@@ -55,6 +52,7 @@ app.register_blueprint(errors_bp)
 from app.dashboard import bp as dashboard_bp
 app.register_blueprint(dashboard_bp)
 
+CORS(app)
 
 if __name__ == '__main__':
 	pass
