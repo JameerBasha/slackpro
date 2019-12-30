@@ -10,9 +10,7 @@ $(document).ready(function () {
                 document.getElementById('messageinputform').reset();
             }
             var messagecontainer = $('#messagecontainer');
-            console.log(messagecontainer)
             var child = messagecontainer.lastElementChild;
-            console.log(child)
         });
         $('form#messageinputform').submit(function (event) {
             var timeToSend = String(new Date())
