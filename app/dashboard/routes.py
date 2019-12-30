@@ -33,7 +33,8 @@ def group(groupid):
         messages=Message.query.filter_by(group_id=group.id).order_by(Message.message_time.desc()).paginate(page,3,False)
         form=MessageForm()
         if form.validate_on_submit():
-            create_message(form)
+            create_message(form,groupid,user=user)
+            return redirect(url_for('dashboard.group',groupid=groupid))
         next_url = url_for('dashboard.group', page=messages.next_num,groupid=groupid) \
         if messages.has_next else None
         prev_url = url_for('dashboard.group', page=messages.prev_num,groupid=groupid) \

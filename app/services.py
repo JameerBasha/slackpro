@@ -54,8 +54,8 @@ def get_group(group_id):
 	group=GroupTable.query.filter_by(id=group_id).all()
 	return group
 
-def create_message(form):
-	messageobj=Message(message=form.message.data,group_id=group_id,user_id=user.id,user_name=user.username)
+def create_message(form,groupid,user):
+	messageobj=Message(message=form.message.data,group_id=groupid,user_id=user.id,user_name=user.username)
 	db.session.add(messageobj)
 	db.session.commit()
 	add_to_index('message',messageobj)
