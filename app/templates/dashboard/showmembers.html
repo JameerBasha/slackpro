@@ -21,6 +21,8 @@
         return 'fail'
     }
     async function downloader() {
+        document.getElementById('loadingscreen').style.display = 'block';
+        document.getElementById('downloadbtn').style.display = 'none';
         var url = 'http://' + window.location.host + '{{ url_for("main.download_content",group_id=groupid,task_id=0)}}';
         let promise = await fetch(url, {
             method: 'GET'
@@ -32,6 +34,8 @@
             var result = await polling(download_url);
             console.log(result);
             if (result != 'fail') {
+                document.getElementById('loadingscreen').style.display = 'none';
+                document.getElementById('downloadbtn').style.display = 'inline';
                 download('http://' + window.location.host + '/download_file/' + result);
                 break;
             }
@@ -84,8 +88,10 @@
     <br>
     <br>
     <a>
-        <button class='btn green' onclick="downloader()">Download Chat</button>
+        <button class='btn green' onclick="downloader()" id='downloadbtn' style='margin-bottom:50px'>Download
+            Chat</button>
     </a>
+    <img id='loadingscreen' src="{{ url_for('static',filename='beans.gif') }}" style='display:none;width:100px;'>
     {% endif %}
     <br>
 </div> {% endblock %}
