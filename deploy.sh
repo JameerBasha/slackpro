@@ -49,7 +49,7 @@ User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/slackpro
 Environment="PATH=/home/ubuntu/slackpro/venv/bin"
-ExecStart=/home/ubuntu/slackpro/venv/bin/gunicorn  --workers 3 --bind unix:slackpro.sock -m 007 wsgi:app
+ExecStart=/home/ubuntu/slackpro/venv/bin/gunicorn -k eventlet  --workers 1 --bind unix:slackpro.sock -m 007 wsgi:app
 StandardOutput=append:/var/log/slackpro/access.log
 StandardError=append:/var/log/slackpro/service.log
 
