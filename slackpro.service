@@ -1,0 +1,18 @@
+"
+[Unit]
+Description=Gunicorn instance to serve slackpro
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/slackpro
+Environment="PATH=/slackpro/venv/bin"
+ExecStart=/slackpro/venv/bin/gunicorn -k eventlet  --workers 1 --bind 127.0.0.1:8000 -m 007 wsgi:app
+StandardOutput=append:/var/log/slackpro/access.log
+StandardError=append:/var/log/slackpro/service.log
+
+
+[Install]
+WantedBy=multi-user.target
+" 

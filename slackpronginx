@@ -1,0 +1,13 @@
+
+"
+
+server{
+        listen 80;
+        server_name 13.127.243.209;
+        location / {
+                proxy_redirect off;
+                proxy_set_header Host $http_host;
+                proxy_pass http://unix:/home/ubuntu/slackpro/slackpro.sock;
+        }
+}
+" 
