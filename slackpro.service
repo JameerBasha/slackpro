@@ -1,6 +1,6 @@
 [program:myprogram]
 directory=/slackpro
-command=/slackpro/venv/bin/gunicorn -k eventlet  --workers 1 --bind 127.0.0.1:8000 -m 007 wsgi:app
+command=/opt/venv/bin/gunicorn -k eventlet  --workers 1 --bind 127.0.0.1:8000 -m 007 wsgi:app
 autostart=true
 autorestart=true
 stdout_logfile=/var/log/access.log
