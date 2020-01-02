@@ -24,7 +24,7 @@ from flask_weasyprint import HTML,render_pdf
 @socketio.on('messagetoserver')
 def message_from_client(message):
     if not(is_authenticated()):
-        return redirect(url_for('auth.login'))
+        return 'Not logged in'
     user=UserTable.query.filter_by(id=current_user.id).first()
     group=GroupTable.query.filter_by(id=message['groupidnumber']).first()
     messageobj=Message(message=message['message'],group_id=group.id,user_id=current_user.id,user_name=user.username)

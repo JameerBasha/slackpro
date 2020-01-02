@@ -86,6 +86,9 @@ def groupinfo(group_id):
 
 @bp.route('/leavegroup/<groupid>',methods=['POST','GET'])
 def leavegroup(groupid):
+    if not(is_authenticated()):
+        flash('Sorry, you are not logged in. Please login to continue')
+        return redirect(url_for('auth.login'))
     if(GroupTable.query.filter_by(id=groupid).first().admin_id==current_user.id):
         flash("You can't leave group in which you are the admin. You can delete the group itself.")
         return redirect(url_for('dashboard.dashboard'))
@@ -95,6 +98,9 @@ def leavegroup(groupid):
 
 @bp.route('/deletegroup/<groupid>',methods=['POST','GET'])
 def deletegroup(groupid):
+    if not(is_authenticated()):
+        flash('Sorry, you are not logged in. Please login to continue')
+        return redirect(url_for('auth.login'))
     if(GroupTable.query.filter_by(id=groupid).first().admin_id !=current_user.id):
         flash('Unauthorised action')
         return redirect(url_for('dashboard.dashboard'))
@@ -104,6 +110,9 @@ def deletegroup(groupid):
 
 @bp.route('/removemember/<groupid>/<memberid>',methods=['POST','GET'])
 def removemember(groupid,memberid):
+    if not(is_authenticated()):
+        flash('Sorry, you are not logged in. Please login to continue')
+        return redirect(url_for('auth.login'))
     if(GroupTable.query.filter_by(id=groupid).first().admin_id !=current_user.id):
         flash('Unauthorised action')
         return redirect(url_for('dashboard.dashboard'))
