@@ -1,0 +1,32 @@
+version: '3'
+services:
+    web:
+      build: ./web
+      restart: always
+      links:
+        - postgres:postgres
+      ports:
+       - '8000:8000'
+      depends_on:
+       - postgres
+    
+    postgres:
+      image: postgres
+      volumes:
+         - ./postgres-data/postgres:/var/lib/postgresql/data
+      ports:
+        - '5432:5432'
+      environment:
+        - POSTGRES_USER=docker
+        - POSTGRES_PASSWORD=docker
+        - POSTGRES_DB=slackpro
+    
+    nginx:
+      build: ./nginx
+      restart: always
+      links:
+        - web:web
+      depends_on:
+        - web
+      ports:
+        - '80:80'

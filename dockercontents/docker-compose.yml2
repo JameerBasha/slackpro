@@ -1,0 +1,14 @@
+version: '3'
+services:
+    web:
+      build: ./web
+      links:
+        - postgres:postgres
+      command: /venv/bin/gunicorn -k eventlet -w 3 -b 0.0.0.0:8000 --chdir /slackpro wsgi:app
+      ports:
+       - '8000:8000'
+
+    postgres:
+      build: ./postgres
+      ports:
+        - '5432:5432'

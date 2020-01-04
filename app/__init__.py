@@ -12,7 +12,7 @@ import arrow
 from flask_cors import CORS
 
 
-db=SQLAlchemy()
+
 login=LoginManager()
 moment=Moment()
 socketio=SocketIO()
@@ -21,11 +21,12 @@ socketio=SocketIO()
 
 app=Flask(__name__)
 app.config.from_object(Config)
-db.init_app(app)
-migrate=Migrate()
+
+
 login.init_app(app)
 login.login_view='auth.login'
-migrate.init_app(app,db)
+db=SQLAlchemy(app)
+migrate=Migrate(app,db)
 moment.init_app(app)
 celery=Celery(app.name,broker='redis://localhost:6379',backend='redis://localhost:6379')
 celery.conf.update(app.config)
